@@ -1,13 +1,8 @@
 source,target,value
-Nuclear, Electric, 50
-Oil, Electric, 40
-Geothermal, Electric, 10
-Nuclear, Thermal, 50
-Oil, Thermal, 50
-Geothermal, Thermal, 5
+Nuclear, Industry, 10
 Nuclear, Losses, 10
-Electric, Losses, 60
-Electric, Industry, 20
-Oil, Losses, 40
-Geothermal, Losses, 20
 Oil, Industry, 30
+Oil, Transit, 20
+Industry, Transit, 5
+Industry, Losses, 30
+Transit, Losses, 3
