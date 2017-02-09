@@ -33,7 +33,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
 
 // load the data (using the timelyportfolio csv method)
-d3.csv("http://aljondo.github.io/sankey-practice.csv", function (data, error) {
+d3.csv("./sankey-practice.csv", function (data, error) {
 	console.log(data)
 		//set up graph in same style as original example but empty
 	graph = {

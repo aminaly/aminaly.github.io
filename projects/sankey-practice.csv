@@ -1,8 +1,13 @@
 source,target,value
-Barry,Elvis,2
-Frodo,Elvis,2
-Frodo,Sarah,2
-Barry,Alice,2
-Elvis,Sarah,2
-Elvis,Alice,2
-Sarah,Alice,4
+Nuclear, Electric, 50
+Oil, Electric, 40
+Geothermal, Electric, 10
+Nuclear, Thermal, 50
+Oil, Thermal, 50
+Geothermal, Thermal, 5
+Nuclear, Losses, 10
+Electric, Losses, 60
+Electric, Industry, 20
+Oil, Losses, 40
+Geothermal, Losses, 20
+Oil, Industry, 30
