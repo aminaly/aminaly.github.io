@@ -1,8 +1,8 @@
 source,target,value
-Nuclear,Industry,10
-Nuclear,Losses,10
-Oil,Industry,30
-Oil,Transit,20
-Industry,Transit,5
-Industry,Losses,30
+Nuclear,Industry,7
+Nuclear,Losses,5
+Oil,Industry,2
+Oil,Transit,4
+Industry,Transit,7
+Industry,Losses,1
 Transit,Losses,3
