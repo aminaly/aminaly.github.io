@@ -3,9 +3,6 @@ function bubbleChart() {
 	var width = 940;
 	var height = 600;
 
-	// tooltip for mouseover functionality
-	var tooltip = floatingTooltip('gates_tooltip', 240);
-
 	// Locations to move bubbles towards, depending
 	// on which view mode is selected.
 	var center = {
@@ -14,19 +11,19 @@ function bubbleChart() {
 	};
 
 	var incomeCenters = {
-		low: {
+		li: {
 			x: width / 4,
 			y: height / 2
 		},
-		lowmid: {
+		lmi: {
 			x: width / 3,
 			y: height / 2
 		},
-		highmid: {
+		umi: {
 			x: 2 * width / 4,
 			y: height / 2
 		},
-		high: {
+		hi: {
 			x: 2 * width / 3,
 			y: height / 2
 		}
