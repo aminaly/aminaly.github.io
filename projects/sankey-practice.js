@@ -35,8 +35,7 @@ var path = sankey.link();
 // load the data (using the timelyportfolio csv method)
 d3.csv("https://aminaly.github.io/projects/sankey-practice.csv",
 	function (error, data) {
-		console.log(error)
-			//set up graph in same style as original example but empty
+		//set up graph in same style as original example but empty
 		graph = {
 			"nodes": [],
 			"links": []
@@ -62,6 +61,8 @@ d3.csv("https://aminaly.github.io/projects/sankey-practice.csv",
 				return d.name;
 			})
 			.map(graph.nodes));
+
+		console.log(graph.nodes)
 
 		// loop through each link replacing the text with its index from node
 		graph.links.forEach(function (d, i) {
