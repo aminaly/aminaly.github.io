@@ -1,7 +1,11 @@
 function bubbleChart() {
 	// Constants for sizing
-	var width = 940;
+	var width = 1000;
 	var height = 600;
+	var qw = width / 5;
+
+	// tooltip for mouseover functionality
+	var tooltip = floatingTooltip('gates_tooltip', 240);
 
 	// Locations to move bubbles towards, depending
 	// on which view mode is selected.
@@ -10,30 +14,38 @@ function bubbleChart() {
 		y: height / 2
 	};
 
-	var incomeCenters = {
+	var IncomeCenters = {
 		li: {
-			x: width / 4,
+			x: qw + 100,
 			y: height / 2
 		},
 		lmi: {
-			x: width / 3,
+			x: 2 * qw + 50,
 			y: height / 2
 		},
 		umi: {
-			x: 2 * width / 4,
+			x: 3 * qw,
 			y: height / 2
 		},
 		hi: {
-			x: 2 * width / 3,
+			x: 4 * qw - 50,
 			y: height / 2
 		}
 	};
 
-	// X locations of the year titles.
-	var yearsTitleX = {
-		2008: 160,
-		2009: width / 2,
-		2010: width - 160
+	// X locations of the Income titles.
+	var IncomesTitleX = {
+		Lower_Income: 160,
+		Lower_Middle_Income: 2 * qw - 20,
+		Upper_Middle_Income: 3 * qw,
+		Upper_Income: width - 160
+	};
+
+	var IncomeNames = {
+		li: "Lower Income",
+		lmi: "Lower Middle Income",
+		umi: "Upper Middle Income",
+		hi: "High Income"
 	};
 
 	// @v4 strength to apply to the position forces
@@ -84,8 +96,8 @@ function bubbleChart() {
 	// Nice looking colors - no reason to buck the trend
 	// @v4 scales now have a flattened naming scheme
 	var fillColor = d3.scaleOrdinal()
-		.domain(['low', 'medium', 'high'])
-		.range(['#d84b2a', '#beccae', '#7aa25c']);
+		.domain(['high', 'mediumhigh', 'mediumlow', 'low'])
+		.range(['lightgreen', 'darkgreen', 'lightblue', 'darkblue']);
 
 
 	/*
@@ -111,7 +123,7 @@ function bubbleChart() {
 		// @v4: new flattened scale names.
 		var radiusScale = d3.scalePow()
 			.exponent(0.5)
-			.range([2, 85])
+			.range([1, 25])
 			.domain([0, maxAmount]);
 
 		// Use map() to convert raw data into node data.
@@ -119,10 +131,10 @@ function bubbleChart() {
 		// working with data.
 		var myNodes = rawData.map(function (d) {
 			return {
-				name: d.Country,
+				id: d.Country,
 				radius: radiusScale(+d.ffConsump),
 				value: +d.ffConsump,
-				group: d.Income,
+				Income: d.Income,
 				x: Math.random() * 900,
 				y: Math.random() * 800
 			};
@@ -163,7 +175,7 @@ function bubbleChart() {
 		// Bind nodes data to what will become DOM elements to represent them.
 		bubbles = svg.selectAll('.bubble')
 			.data(nodes, function (d) {
-				return d.Country;
+				return d.id;
 			});
 
 		// Create new circle elements each with class `bubble`.
@@ -176,10 +188,10 @@ function bubbleChart() {
 			.classed('bubble', true)
 			.attr('r', 0)
 			.attr('fill', function (d) {
-				return fillColor(d.group);
+				return fillColor(d.Income);
 			})
 			.attr('stroke', function (d) {
-				return d3.rgb(fillColor(d.group))
+				return d3.rgb(fillColor(d.Income))
 					.darker();
 			})
 			.attr('stroke-width', 2)
@@ -223,22 +235,22 @@ function bubbleChart() {
 	}
 
 	/*
-	 * Provides a x value for each node to be used with the split by income
+	 * Provides a x value for each node to be used with the split by Income
 	 * x force.
 	 */
-	function nodeYearPos(d) {
-		return incomeCenters[d.Income].x;
+	function nodeIncomePos(d) {
+		return IncomeCenters[d.Income].x;
 	}
 
 
 	/*
 	 * Sets visualization in "single group mode".
-	 * The year labels are hidden and the force layout
+	 * The Income labels are hidden and the force layout
 	 * tick function is set to move all nodes to the
 	 * center of the visualization.
 	 */
 	function groupBubbles() {
-		hideYearTitles();
+		hideIncomeTitles();
 
 		// @v4 Reset the 'x' force to draw the bubbles to the center.
 		simulation.force('x', d3.forceX()
@@ -252,18 +264,18 @@ function bubbleChart() {
 
 
 	/*
-	 * Sets visualization in "split by year mode".
-	 * The year labels are shown and the force layout
+	 * Sets visualization in "split by Income mode".
+	 * The Income labels are shown and the force layout
 	 * tick function is set to move nodes to the
-	 * yearCenter of their data's year.
+	 * IncomeCenter of their data's Income.
 	 */
 	function splitBubbles() {
-		showYearTitles();
+		showIncomeTitles();
 
-		// @v4 Reset the 'x' force to draw the bubbles to their year centers
+		// @v4 Reset the 'x' force to draw the bubbles to their Income centers
 		simulation.force('x', d3.forceX()
 			.strength(forceStrength)
-			.x(nodeYearPos));
+			.x(nodeIncomePos));
 
 		// @v4 We can reset the alpha value and restart the simulation
 		simulation.alpha(1)
@@ -271,28 +283,28 @@ function bubbleChart() {
 	}
 
 	/*
-	 * Hides Year title displays.
+	 * Hides Income title displays.
 	 */
-	function hideYearTitles() {
-		svg.selectAll('.year')
+	function hideIncomeTitles() {
+		svg.selectAll('.Income')
 			.remove();
 	}
 
 	/*
-	 * Shows Year title displays.
+	 * Shows Income title displays.
 	 */
-	function showYearTitles() {
+	function showIncomeTitles() {
 		// Another way to do this would be to create
-		// the year texts once and then just hide them.
-		var yearsData = d3.keys(yearsTitleX);
-		var years = svg.selectAll('.year')
-			.data(yearsData);
+		// the Income texts once and then just hide them.
+		var IncomesData = d3.keys(IncomesTitleX);
+		var Incomes = svg.selectAll('.Income')
+			.data(IncomesData);
 
-		years.enter()
+		Incomes.enter()
 			.append('text')
-			.attr('class', 'year')
+			.attr('class', 'Income')
 			.attr('x', function (d) {
-				return yearsTitleX[d];
+				return IncomesTitleX[d];
 			})
 			.attr('y', 40)
 			.attr('text-anchor', 'middle')
@@ -311,16 +323,15 @@ function bubbleChart() {
 		d3.select(this)
 			.attr('stroke', 'black');
 
-		var content = '<span class="name">Title: </span><span class="value">' +
-			d.Country +
+		var content = '<span class="name">Country: </span><span class="value">' +
+			d.id +
 			'</span><br/>' +
-			'<span class="name">Amount: </span><span class="value">$' +
-			addCommas(d.ffConsump) +
+			'<span class="name">Oil Consumption: </span><span class="value">' +
+			d.value +
 			'</span><br/>' +
-			'<span class="name">Year: </span><span class="value">' +
-			d.Income +
+			'<span class="name">Income Level: </span><span class="value">' +
+			IncomeNames[d.Income] +
 			'</span>';
-
 		tooltip.showTooltip(content, d3.event);
 	}
 
@@ -330,7 +341,7 @@ function bubbleChart() {
 	function hideDetail(d) {
 		// reset outline
 		d3.select(this)
-			.attr('stroke', d3.rgb(fillColor(d.group))
+			.attr('stroke', d3.rgb(fillColor(d.Income))
 				.darker());
 
 		tooltip.hideTooltip();
@@ -339,9 +350,9 @@ function bubbleChart() {
 	/*
 	 * Externally accessible function (this is attached to the
 	 * returned chart function). Allows the visualization to toggle
-	 * between "single group" and "split by year" modes.
+	 * between "single group" and "split by Income" modes.
 	 *
-	 * displayName is expected to be a string and either 'year' or 'all'.
+	 * displayName is expected to be a string and either 'Income' or 'all'.
 	 */
 	chart.toggleDisplay = function (displayName) {
 		if (displayName === 'Income') {
@@ -398,23 +409,6 @@ function setupButtons() {
 			// the currently clicked button.
 			myBubbleChart.toggleDisplay(buttonId);
 		});
-}
-
-/*
- * Helper function to convert a number into a string
- * and add commas to it to improve presentation.
- */
-function addCommas(nStr) {
-	nStr += '';
-	var x = nStr.split('.');
-	var x1 = x[0];
-	var x2 = x.length > 1 ? '.' + x[1] : '';
-	var rgx = /(\d+)(\d{3})/;
-	while (rgx.test(x1)) {
-		x1 = x1.replace(rgx, '$1' + ',' + '$2');
-	}
-
-	return x1 + x2;
 }
 
 // Load the data.
