@@ -1,0 +1,35 @@
+<div style="display: block;">
+  <canvas baseChart width="100" height="100"> 
+  <script>
+     d3.csv("../src/data/finaltab_basic_cummulative_country.csv").then(makeChart);
+
+     function makeChart(countries) {
+	public var countryLabels = countries.map(function (d) {
+	  return d.COUNTRY;
+	});
+	public var percPAData = countries.map(function (d) {
+	  return d.cum_percPA;
+	});
+
+	public var chart = new Chart("lineChart", {
+	  type: "line",
+	  data: {
+	    labels: countryLabels, 
+	    datasets: [
+	      {
+                data: percPAData 
+              }
+            ]
+          }
+        });
+      }
+   </script>
+
+    [options]="lineChartOptions"
+    [colors]="lineChartColors"
+    [legend]="lineChartLegend"
+    [chartType]="lineChartType"
+    [plugins]="lineChartPlugins">
+  </canvas>
+</div>
+<router-outlet></router-outlet>
